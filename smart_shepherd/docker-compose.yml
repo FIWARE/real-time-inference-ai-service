@@ -1,0 +1,75 @@
+version: "3.7"
+
+# FastAPI app
+services:
+  apis:
+    image: ${ML_API_IMAGE:-quay.io/rihab_feki/ml_api:0.0.2}
+    container_name: apis
+    environment:
+      - WEATHER_SERVICE_ORION_HOST=weather.orion.docker
+      - WEATHER_SERVICE_ORION_PORT=1026
+      - AI_PROVIDER_ORION_HOST=ai.orion.docker
+      - AI_PROVIDER_ORION_PORT=1026
+    ports:
+      - 5000:5000
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - apis.docker
+  
+  orion-ld:
+    # this image definition uses the latest-stable release as default and allows to overwrite it via the env-var ORION_IMAGE
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    container_name: ai-orion-ld
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - ai.orion.docker
+    # only informational
+    expose:
+      - "1026"
+    # allow to access orion via 'localhost:1028', wich is fowarded to port 1026 on the container
+    ports:
+      - "1028:1026"
+    # configuration via env var is less invasive and does not require knowledge about the entrypoint, thus is recommended 
+    environment:
+      - ORIONLD_MONGO_HOST=ai.mongo.docker
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - ai-mongo-db
+
+  ai-mongo-db:
+    # current default for orion is mongo >= 4
+    image: mongo:4.0
+    container_name: ai-mongo-db
+    # no need for mongo to be available on localhost, since orion connects through the network -> ports section removed.
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - ai.mongo.docker
+    command: --nojournal
+    # do you need the mongo-db to be persistent? Then the volume-mount needs to be ai-mongo-database:/data/db
+    # the current mount has no practical benefits, it will mount an empty volume to an unused folder inside mongo
+    #volumes:
+    #  - ai-mongo-database:/data/db
+
+  ai-provider-apollo:
+    # this image definition uses the latest-stable release as default and allows to overwrite it via the env-var APOLLO_IMAGE
+    image: ${APOLLO_IMAGE:-quay.io/fiware/apollo}
+    ports:
+      - 8080:8080
+    restart: always
+    networks: 
+    # needs to be in the same network to be able to reach orion by hostname
+      ai-poc-network: 
+        aliases: 
+          - ai.notification-proxy.docker
+    environment:
+      - MICRONAUT_SERVER_PORT=8080
+    # tenant=null is the default and not required here.
+      - MICRONAUT_HTTP_SERVICES_BROKER_URL=http://ai.orion.docker:1026
+
+networks:
+  ai-poc-network:
+    name: ai-poc-network
+

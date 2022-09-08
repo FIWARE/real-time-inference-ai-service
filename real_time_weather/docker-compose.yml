@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  weather-orion-ld:
+    image: ${ORION_LD_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    container_name: weather-orion-ld
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - weather.orion.docker
+    expose:
+      - "1026"
+    ports:
+      - "1026:1026"
+    environment:
+      - ORIONLD_MONGO_HOST=weather.mongo.docker
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - weather-mongo-db
+
+  weather-mongo-db:
+    image: mongo:4.0
+    container_name: weather-mongo-db
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - weather.mongo.docker
+    command: --nojournal
+
+networks:
+  ai-poc-network:
+    external: true

@@ -1,0 +1,43 @@
+version: "3.7"
+
+services:
+  farm-orion-ld:
+    image: ${ORION_LD_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - farm.orion.docker
+    expose:
+      - "1026"
+    ports:
+      - "1029:1026"
+    environment:
+      - ORIONLD_MONGO_HOST=farm.mongo.docker
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - farm-mongo-db
+
+  farm-mongo-db:
+    image: mongo:4.0
+    networks: 
+      ai-poc-network: 
+        aliases: 
+          - farm.mongo.docker
+    command: --nojournal
+
+  farm-apollo:
+    image: ${APOLLO_IMAGE:-quay.io/fiware/apollo}
+    ports:
+      - 8081:8081
+    restart: always
+    networks:
+      ai-poc-network:
+        aliases: 
+          - farm.notification-proxy.docker
+    environment:
+      - MICRONAUT_SERVER_PORT=8081
+      - MICRONAUT_HTTP_SERVICES_BROKER_URL=http://farm.orion.docker:1026
+
+networks:
+  ai-poc-network:
+    external: true

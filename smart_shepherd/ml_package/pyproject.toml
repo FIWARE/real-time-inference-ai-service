@@ -1,0 +1,33 @@
+[build-system]
+requires = [
+    "setuptools>=56",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "2.0"
+addopts = "-rfEX -p pytester --strict-markers"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test", "Acceptance"]
+python_functions = ["test"]
+# NOTE: "doc" is not included here, but gets tested explicitly via "doctesting".
+testpaths = ["tests"]
+xfail_strict = true
+filterwarnings = [
+    "error",
+    "default:Using or importing the ABCs:DeprecationWarning:unittest2.*",
+    # produced by older pyparsing<=2.2.0.
+    "default:Using or importing the ABCs:DeprecationWarning:pyparsing.*",
+    "default:the imp module is deprecated in favour of importlib:DeprecationWarning:nose.*",
+    "ignore:.*U.*mode is deprecated:DeprecationWarning:(?!(pytest|_pytest))",
+    # produced by pytest-xdist
+    "ignore:.*type argument to addoption.*:DeprecationWarning",
+    # produced on execnet (pytest-xdist)
+    "ignore:.*inspect.getargspec.*deprecated, use inspect.signature.*:DeprecationWarning",
+    # pytest's own futurewarnings
+    "ignore::pytest.PytestExperimentalApiWarning",
+    "default:invalid escape sequence:DeprecationWarning",
+    # ignore use of unregistered marks, because we use many to test the implementation
+    "ignore::_pytest.warning_types.PytestUnknownMarkWarning",
+]

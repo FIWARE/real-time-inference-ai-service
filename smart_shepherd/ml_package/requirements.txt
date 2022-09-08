@@ -1,0 +1,15 @@
+# Building the model requirements 
+numpy>=1.22.2,<1.23.0
+pandas>=1.2.2,<1.3.0
+pydantic>=1.8.2,<1.9.0
+scikit-learn>=1.1.1,<1.2.0
+strictyaml>=1.6.1,<1.7.0
+joblib>=1.0.1,<1.1.0
+xgboost>=1.5.2,<1.6.0
+
+# testing requirements 
+pytest>=7.0.1,<7.1.0
+
+# packaging
+setuptools>=56.0.0,<56.1.0
+wheel>=0.36.2,<0.37.0
