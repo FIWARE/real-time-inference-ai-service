@@ -1,14 +1,13 @@
 # Building real-time inference AI services with FIWARE
 
-[FIWARE Global Summit AI training session materials]
 
 This tutorial is an implementation of a proof of concept for 
-an AI service that provids real-time prediction and by means of having a Context Broker deployed in the offered service, the data provisioning will be in real-time from the data source(s) to the AI model and respectively publishing the results of the predictions to the consumer application via a Context Broker on the consumer side.
+an AI service that provides real-time prediction and by means of having a Context Broker deployed in the offered service, the data provisioning will be in real-time from the data source(s) to the AI model and respectively publishing the results of the predictions to the consumer application via a Context Broker on the consumer side.
 
 # Overall architecture 
-The architecture below illustrates the environments correspondant to each participant and the componenets that are used to enable the real-time inference. 
+The architecture below illustrates the environments correspondent to each participant and the components that are used to enable the real-time inference. 
 
-**Use case:** Prediction of animal activity (e.g grazing, walking, stand-up,..) based on its x, y, z coordinates and the observed ambinat temperature. 
+**Use case:** Prediction of animal activity (e.g grazing, walking, stand-up,..) based on its x, y, z coordinates and the observed ambient temperature. 
 
 ![architecture](/doc/overall-architecture.jpg)
 
@@ -46,7 +45,7 @@ The main goal of te subscription is to allow the automated data exchange between
 
 In this use case, there are three subscriptions to be setup: 
 
-* **Subscription 1:**  Smart Shepehrd Inc. subscribes to the Context Broker of Happy Cattle Co. to receive in an automated way animal coordinates update in its Context Broker by means of a Notification Proxy 
+* **Subscription 1:**  Smart Shepherd Inc. subscribes to the Context Broker of Happy Cattle Co. to receive in an automated way animal coordinates update in its Context Broker by means of a Notification Proxy 
 
 ```shell
    curl -v --location POST 'localhost:1029/ngsi-ld/v1/subscriptions/' \
@@ -70,7 +69,7 @@ In this use case, there are three subscriptions to be setup:
          }
       }'
   ```
-* **Subscription 2:** Smart Shepherd Inc. AI service subscribes to the Context Broker in its own environment, to receive at the notification endpoint the coordinates once it is updated due to subscription 1. That will trigger the calculation of the prediction which also relies on getting temerature data. 
+* **Subscription 2:** Smart Shepherd Inc. AI service subscribes to the Context Broker in its own environment, to receive at the notification endpoint the coordinates once it is updated due to subscription 1. That will trigger the calculation of the prediction which also relies on getting temperature data. 
 
 ```shell
    curl -v --location POST 'localhost:1028/ngsi-ld/v1/subscriptions/' \
@@ -141,7 +140,7 @@ In this use case, there are three subscriptions to be setup:
       }'
 ```
 
-* Create an Animal entity at the Contect Broker of Happy Cattle:
+* Create an Animal entity at the Context Broker of Happy Cattle:
 ```shell
    curl -v --location POST 'localhost:1029/ngsi-ld/v1/entities' \
       --header 'Content-Type: application/json' \
@@ -194,7 +193,7 @@ Here you should have as a result an entity of type Animal created in the Context
       }'
 ```
 
-After creating the entities or updating them, everytime this process triggers the prediction calculation, first the results are updates in the Context Broker of Smart Shepherd (see entity: AnimalActivity) and then due to subscription 3, this new entity AnimalActiviy is updated in the Context Broker of Happy Cattle.  
+After creating the entities or updating them, every time this process triggers the prediction calculation, first the results are updates in the Context Broker of Smart Shepherd (see entity: AnimalActivity) and then due to subscription 3, this new entity AnimalActiviy is updated in the Context Broker of Happy Cattle.  
 
 * Query the Broker of Smart Shepherd:
  ```shell

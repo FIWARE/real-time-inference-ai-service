@@ -4,6 +4,10 @@ Smart Shepherd Inc. is offering an AI service which consists of a set of scripts
 
 ## About the AI service 
 
+The AI service is structured in two parts: 
+- **The ML API:** This is where the inference logic with the trained ML model is implemented. (for more details check the [documentation](/smart_shepherd/ml_api/readme.md))
+- **The Python ML package of the classification model**: This is where the training can be launched and the training pipeline and data can be configured. (for more details check the [documentation](/smart_shepherd/ml_package/readme.md))
+
 The AI service provider is responsible for training a Machine Learning model using historical data as well as providing an interface for the data provisioning needed for the inference to get future prediction based on the right-time data in NGSI-LD format received via the Context Broker. In addition to that, the output of the AI model is also being processed. Then, the prediction attribute(s) are updated in the Context Broker.
 
 ![ai-service](/doc/ai-service.jpg)
